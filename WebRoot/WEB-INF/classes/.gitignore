@@ -1,0 +1,9 @@
+/applicationContext.xml
+/com/
+/db.properties
+/log4j.properties
+/mybatis-context.xml
+/resources.properties
+/service.xml
+/struts.xml
+/test/

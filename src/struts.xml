@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE struts PUBLIC 
+	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"/WEB-INF/struts-2.0.dtd">
+
+<struts>
+	<!-- 引入struts-defaulst.xml 文件 -->
+	<include file="struts-default.xml" />
+	<!-- 设置页面字符编码，可解决乱码问题 -->
+	<constant name="struts.i18n.encoding" value="UTF-8" /> 
+	
+	<!-- 表单上传图片时用 ,与此拦截器配套使用：<interceptor-ref name="fileUploadStack" />-->
+	 <constant name="struts.multipart.saveDir" value="uploads"></constant> 
+	
+	<!-- 设置Struts2应用是否使用开发模式（如果设置该属性为true显示更多信息） -->
+	<constant name="struts.devMode" value="false" />
+	
+	<!-- 设置当struts.xml文件改变后，系统是否自动重新加载该文件（该属性的默认值是false） -->
+	<constant name="struts.configuration.xml.reload" value="false" />
+	
+	<!-- 指定Struts2应用所需要的国际化资源文件，多份国际化资源文件，逗号隔开 -->
+	<constant name="struts.custom.i18n.resources" value="resources" />
+	
+	<!-- 指定Struts2需要处理的请求后缀，该属性的默认值是action，即所有匹配*.action的请求都由Struts2处理 -->
+	<constant name="struts.action.extension" value="do,action" />
+	
+	
+	<package name="demo" extends="struts-default">
+		<!--  -->
+		<action name="user_*" method="{1}" class="com.testing.action.UserAction">
+			<result name="reg">/reg.jsp</result>
+			<result name="query">/query.jsp</result>
+			<result name="input">login.jsp</result>
+		</action>
+
+		
+
+	</package>
+</struts>

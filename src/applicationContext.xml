@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:c="http://www.springframework.org/schema/c" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<!-- ==================================================== -->
+	<!-- 配置多资源文件,多个文件用逗号[xxx.properties,xxx.properties]分离 -->
+	<context:property-placeholder location="classpath:db.properties" />
+
+	<!-- ==================================================== -->
+	<!-- 连接数据源的资源配置文件（连接地址、用户、密码、大小等） -->
+	<bean name="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName">
+			<value>${datasource.driver}</value>
+		</property>
+		<property name="url">
+			<value>${datasource.url}</value>
+		</property>
+		<property name="username">
+			<value>${datasource.username}</value>
+		</property>
+		<property name="password">
+			<value>${datasource.password}</value>
+		</property>
+	</bean>
+
+	<!-- 配置MyBatis3实例工厂，进行sql资源配置文件映射 -->
+	<bean id="sessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- mybatis主配置文件 -->
+		<property name="configLocation" value="classpath:mybatis-context.xml" />
+		<property name="dataSource" ref="dataSource" />
+		<!-- 关联文件(sql语句) -->
+		<property name="mapperLocations" value="classpath*:com/testing/model/*.xml" />
+	</bean>
+
+	<!-- 配置MyBatis3数据库操作模板，进行sql配置操作数据库 -->
+	<bean id="session" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="sessionFactory" />
+	</bean>
+
+	<!-- ==================================================== -->
+	<!-- Transaction manager for a single JDBC DataSource -->
+	<!-- (see liyong-jdbc.xml for an alternative) -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+
+	<!-- 声明式事务 -->
+	<aop:config>
+		<aop:advisor pointcut="execution(* com.testing.service.*.*(..))"
+			advice-ref="txAdvice" />
+	</aop:config>
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="add*" propagation="REQUIRED"  />
+			<tx:method name="update*" propagation="REQUIRED"  />
+			<tx:method name="del*" propagation="REQUIRED"  />
+			<tx:method name="find*" read-only="true"  />
+			<tx:method name="query*" read-only="true"  />
+		</tx:attributes>
+	</tx:advice>
+	
+	
+	<import resource="service.xml"/>
+</beans>
